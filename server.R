@@ -2,6 +2,8 @@ library(AotClient)
 library(DT)
 library(leaflet)
 
+source("viewAotData.R")
+
 df <- reactive({
   ls.nodes()
 })
