@@ -4,7 +4,8 @@ body <- fluidPage(
   fluidRow(
     column(
       4,
-      h3("Select County")
+      h3("Select County"),
+      leafletOutput("map")
     ),
     column(
       4,
