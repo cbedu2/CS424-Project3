@@ -1,13 +1,3 @@
 library(shinydashboard)
 
-body <- dashboardBody(
-)
-
-
-ui <- fluidPage(
-  fluidRow(
-    body
-  )
-)
-
-ui
+ui <- htmlTemplate("WWW/index.html")

@@ -1,0 +1,16 @@
+#charts{
+}
+
+#vizDisplay{
+    display: inline-flex;
+    border-color: darkred;
+    height: 75%;
+}
+
+
+.chart{
+    padding: 10px;
+}
+#controls{
+    width: 100%;
+}
