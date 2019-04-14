@@ -1,11 +1,29 @@
 library(shinydashboard)
 
-body <- dashboardBody(
+body <- fluidPage(
+  fluidRow(
+    column(
+      4,
+      h3("Select County")
+    ),
+    column(
+      4,
+      h3("Test Table"),
+      DT::dataTableOutput("mytable")
+    ),
+    column(
+      4,
+      h3("Charts")
+    )
+  ),
+  fluidRow(
+    h3("controls")
+  )
 )
 
 
-ui <- basicPage(
-  h2("Test table"),
-  DT::dataTableOutput("mytable")
+ui <- fluidPage(
+  body
 )
+
 ui
