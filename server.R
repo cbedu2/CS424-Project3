@@ -4,8 +4,12 @@ library(leaflet)
 
 source("viewAotData.R")
 
-df <- reactive({
-  ls.nodes()
+sensors <- reactive({
+  getSensors()
+})
+
+nodes <- reactive({
+  getNodes()
 })
 
 shapeNodes <- function(nodedf) {
@@ -14,12 +18,12 @@ shapeNodes <- function(nodedf) {
 }
 
 server <- shinyServer(function(input, output) {
-  output$table <- renderDataTable(df(),
+  output$table <- renderDataTable(nodes(),
                                   options = list(pageLength = 5))
   output$map <- renderLeaflet({
     leaflet() %>%
       addProviderTiles(providers$CartoDB.Positron) %>%
-      addMarkers(data=shapeNodes(df()))
+      addMarkers(data=shapeNodes(nodes()))
   })
 })
 
