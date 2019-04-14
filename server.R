@@ -1,8 +1,9 @@
 library(AotClient)
 library(DT)
-df<-ls.nodes()
+source("viewAotData.R")
+
 server <- shinyServer(function(input, output) {
-  output$table <- renderDataTable(df,
+  output$mytable <- renderDataTable(nodes,
                 options = list(
                   pageLength = 5
                 )
