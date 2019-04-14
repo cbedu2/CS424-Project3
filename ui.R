@@ -1,6 +1,7 @@
 library(shinydashboard)
 
 body <- dashboardBody(
+  leafletOutput("map")
 )
 
 
