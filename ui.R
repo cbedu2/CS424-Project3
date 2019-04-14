@@ -1,5 +1,5 @@
 library(shinydashboard)
-
+library(leaflet)
 body <- fluidPage(
   fluidRow(
     column(
@@ -10,7 +10,7 @@ body <- fluidPage(
     column(
       4,
       h3("Test Table"),
-      DT::dataTableOutput("mytable")
+      DT::dataTableOutput("table")
     ),
     column(
       4,
