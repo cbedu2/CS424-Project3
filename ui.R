@@ -39,9 +39,9 @@ ui <- bootstrapPage(
         class="col-xs-6 col-md-3 col-lg-3",
         h3("Interactive Map"),
         leafletOutput("map",height=600),
-        actionButton("mapRoadViewr", "Road Map"),
-        actionButton("mapSataliteView", "Satellite "),
-        actionButton("mapTerainView", "Terain")
+        actionButton("mapRoadView", "Road Map"),
+        actionButton("mapSatelliteView", "Satellite"),
+        actionButton("mapTerrainView", "Terrain")
       ),
       tags$div(
         height="75%",
