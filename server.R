@@ -32,10 +32,21 @@ shapeNodes <- function(nodedf) {
 server <- shinyServer(function(input, output) {
   output$table <- renderDataTable(nodes(),
                                   options = list(pageLength = 5))
+  
+  # Render the map the first time
   output$map <- renderLeaflet({
     leaflet(shapeNodes(nodes())) %>%
       addProviderTiles(providers$CartoDB.Positron) %>%
       addMarkers(icon=starIcon)
+  })
+  # Update the map on changes to inputs
+  observe({
+    tileset <- switch(input$mapTiles,
+                      "r" = providers$CartoDB.Positron,
+                      "s" = providers$Esri.WorldImagery,
+                      "t" = providers$Stamen.TopOSMRelief)
+    leafletProxy("map") %>%
+      addProviderTiles(tileset)
   })
 })
 
