@@ -32,7 +32,6 @@ ui <- bootstrapPage(
   css,
   h2("The Air I Breathe"),
   tags$div(id="mainpage",class="col-12",
-    fluidRow(
       tags$div(
         height="75%",
         style="height:100%",
@@ -52,18 +51,18 @@ ui <- bootstrapPage(
       ),
       tags$div(
         id="compareNodes",
-        class="col-xs-6 col-md-6 col-lg-6",
+        class="col-xs-12 col-md-6 col-lg-6",
         tags$div(
-                 class="col-xs-6 col-md-3 col-lg-3",
-                 style="height:100%; border: 5px solid red; height: 100%; width:50%",
-                 h3("Node1"),
-                 placeholderImg
+          style="height:100%; border: 5px solid red;width:50%",
+          class="col-xs-6 col-md-3 col-lg-3",
+          h3("Node1"),
+          placeholderImg
         ),
         tags$div(height="75%",
-                 class="col-xs-6 col-md-3 col-lg-3",
-                 style="height:100%; border: 5px solid red; height: 100%; width:50%",
-                 h3("Node1"),
-                 placeholderImg
+          style="height:100%; border: 5px solid red;width:50%",
+          class="col-xs-6 col-md-3 col-lg-3",
+          h3("Node1"),
+          placeholderImg
         ),
         tags$div(
           tags$p("select timeframe to view"),
@@ -71,9 +70,7 @@ ui <- bootstrapPage(
           actionButton("hoursTimeView", " Last 24 Hours"),
           actionButton("daysTimeView", "Last 7 Days")
         )
-      )
-    ),
-    fluidRow(
+      ),
       tags$div(
         class="col-md-12 col-lg-12 col-xs-4",
         tags$div(
@@ -92,7 +89,6 @@ ui <- bootstrapPage(
           "and",
           tags$a(href="#","things")
         )
-      )
     )
   )
 ))
