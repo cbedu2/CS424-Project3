@@ -38,9 +38,9 @@ ui <- bootstrapPage(
         class="col-xs-6 col-md-3 col-lg-3",
         h3("Interactive Map"),
         leafletOutput("map",height=600),
-        actionButton("mapRoadViewr", "Road Map"),
-        actionButton("mapSataliteView", "Satellite "),
-        actionButton("mapTerainView", "Terain")
+        actionButton("mapRoadView", "Road Map"),
+        actionButton("mapSatelliteView", "Satellite"),
+        actionButton("mapTerrainView", "Terrain")
       ),
       tags$div(
         height="75%",
@@ -81,7 +81,10 @@ ui <- bootstrapPage(
           actionButton("no2Filter", "NO2"),
           actionButton("coFilter", "CO"),
           actionButton("pm2Filter", "PM2.5"),
-          actionButton("pm10Filer", "PM10")
+          actionButton("pm10Filer", "PM10"),
+          actionButton("tempFilter", "Temperature"),
+          actionButton("lightFilter", "Light Intensity"),
+          actionButton("humFilter", "Humidity")
         ),
         tags$p(
           "this dashboard was created by Dylan Vo, Wilfried Bedu, William Toher. It uses data from",
