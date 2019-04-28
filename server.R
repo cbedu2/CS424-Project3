@@ -7,7 +7,6 @@ source("viewAotData.R")
 
 v <- reactiveValues()
 v$nodes <- nodes
-v$nodes2 <- nodes2
 v$viewNode <- NULL
 v$cmpNodes <- NULL
 
