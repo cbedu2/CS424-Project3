@@ -7,6 +7,9 @@ source("viewAotData.R")
 
 v <- reactiveValues()
 v$nodes <- nodes
+v$nodes2 <- nodes2
+v$viewNode <- NULL
+v$cmpNodes <- NULL
 
 starIcon <- makeIcon(
   iconUrl = './assets/chicagostar25.png',
@@ -15,13 +18,12 @@ starIcon <- makeIcon(
 )
 
 server <- shinyServer(function(input, output, session) {
-  nodes_r <- reactiveVal(nodes)
-  
   output$table <- renderDataTable(v$nodes,
                                   options = list(pageLength = 5))
   observe({
     clickedMarker <- input$map_marker_click
-    coords <- c(clickedMarker$lng, clickedMarker$lat)
+    v$cmpNodes <- c(clickedMarker$id, v$viewNode)
+    v$viewNode <- clickedMarker$id
     #dataTableProxy("table") %>% selectColumns()
   })
   output$testarea <- renderPrint({
@@ -43,8 +45,7 @@ server <- shinyServer(function(input, output, session) {
                       "r" = providers$CartoDB.Positron,
                       "s" = providers$Esri.WorldImagery,
                       "t" = providers$Stamen.TopOSMRelief)
-    leafletProxy("map") %>%
-      addProviderTiles(tileset)
+    leafletProxy("map") %>% addProviderTiles(tileset)
   })
 })
 

@@ -66,7 +66,9 @@ ui <- bootstrapPage(
         tags$div(class="col-md-12 col-lg-12 col-xs-4",
             tags$div(
                 checkboxGroupInput("filters", "Filter Options", inline = TRUE,
-                                   choices = filterList, selected=filterList)
+                                   choices = filterList, selected=filterList),
+                radioButtons("units", "Units", inline = TRUE,
+                             choiceValues = c("i", "m"), choiceNames = c("Imperial", "Metric"))
             ),
             tags$p(
                 "this dashboard was created by Dylan Vo, Wilfried Bedu, William Toher. It uses data from",
