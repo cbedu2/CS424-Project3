@@ -1,6 +1,7 @@
 library(AotClient)
 library(DT)
 library(dplyr)
+library(stringr)
 
 sensors <- ls.sensors()
 nodes <- ls.nodes()
@@ -27,6 +28,12 @@ testSensor <- function(nodeId, sensorName) {
     nrow()
   x > 0
 }
+testOtherSensors <- function(nodeId, sensorType){
+  x <- observations %>%
+    dplyr::filter(node_vsn == nodeId & str_detect(sensor_path,sensorType))%>%
+    nrow()
+  x > 0
+}
 
 nodes$CO <- sapply(nodes$vsn, testSensor, "chemsense.co.concentration")
 nodes$H2S <- sapply(nodes$vsn, testSensor, "chemsense.h2s.concentration")
@@ -35,6 +42,10 @@ nodes$O3 <- sapply(nodes$vsn, testSensor, "chemsense.o3.concentration")
 nodes$SO2 <- sapply(nodes$vsn, testSensor, "chemsense.so2.concentration")
 nodes$PM2.5 <- sapply(nodes$vsn, testSensor, "alphasense.opc_n2.pm2_5")
 nodes$PM10 <- sapply(nodes$vsn, testSensor, "alphasense.opc_n2.pm10")
+nodes$Temp <- sapply(nodes$vsn, testOtherSensors,"temperature")
+nodes$Humidity <- sapply(nodes$vsn, testOtherSensors,"humidity")
+nodes$Intensity <- sapply(nodes$vsn, testOtherSensors,"intensity")
+
 # TODO: Temperature, Humidity, Light Intensity
 
 
