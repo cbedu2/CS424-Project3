@@ -6,8 +6,15 @@ nodes <- ls.nodes()
 observations <-ls.observations(filters=list(size=1000))
 observations2 <- merge(observations, nodes, by.x='node_vsn',by.y="vsn")
 
+latlng <- nodes$location.geometry$coordinates %>%
+          unlist() %>%
+          matrix(ncol=2, byrow=TRUE)
+
+nodes$lat <- latlng[,2]
+nodes$lng <- latlng[,1]
+
 nodes <- nodes %>%
-  dplyr::select(vsn,address) %>%
+  dplyr::select(vsn,address,lat,lng) %>%
   dplyr::filter(address!="TBD" & address!="Georgia Tech")
 sapply(nodes,class)
 co <- observations2 %>% 

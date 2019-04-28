@@ -5,22 +5,8 @@ library(sp)
 
 source("viewAotData.R")
 
-sensors <- reactive({
-  getSensors()
-})
-
-nodes <- reactive({
-  n <- getNodes()
-
-  latlng <-
-    n$location.geometry$coordinates %>%
-    unlist() %>%
-    matrix(ncol=2, byrow=TRUE)
-
-  n$lat <- latlng[,2]
-  n$lng <- latlng[,1]
-  n
-})
+v <- reactiveValues()
+v$nodes <- nodes
 
 starIcon <- makeIcon(
   iconUrl = './assets/chicagostar25.png',
@@ -28,8 +14,10 @@ starIcon <- makeIcon(
   iconHeight = 25
 )
 
-server <- shinyServer(function(input, output) {
-  output$table <- renderDataTable(nodes(),
+server <- shinyServer(function(input, output, session) {
+  nodes_r <- reactiveVal(nodes)
+  
+  output$table <- renderDataTable(v$nodes,
                                   options = list(pageLength = 5))
   observe({
     clickedMarker <- input$map_marker_click
@@ -39,11 +27,13 @@ server <- shinyServer(function(input, output) {
   output$testarea <- renderPrint({
     clickedMarker <- input$map_marker_click
     clickedMarker
+    # v$nodes
   })
   
   # Render the map the first time
   output$map <- renderLeaflet({
-    leaflet(nodes()) %>%
+    # leaflet() %>% addProviderTiles(providers$CartoDB.Positron)
+    leaflet(v$nodes) %>%
       addProviderTiles(providers$CartoDB.Positron) %>%
       addMarkers(icon=starIcon, layerId=~vsn)
   })
