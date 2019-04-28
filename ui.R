@@ -2,6 +2,9 @@ library(shinydashboard)
 library(leaflet)
 library(DT)
 
+filterList <- c("SO2", "H2S", "O3", "NO2", "CO", "PM2.5", "PM10",
+                "Temperature", "Light Intensity", "Humidity")
+
 placeholderImg <- renderImage({
   # A temp file to save the output.
   # This file will be removed later by renderImage
@@ -35,9 +38,10 @@ ui <- bootstrapPage(
         tags$div(class="col-xs-6 col-md-3 col-lg-3", style="height:100%",
             h3("Interactive Map"),
             leafletOutput("map",height=600),
-            actionButton("mapRoadView", "Road Map"),
-            actionButton("mapSatelliteView", "Satellite"),
-            actionButton("mapTerrainView", "Terrain")
+            radioButtons("mapTiles", "Map Background",
+                         choiceValues = c("r", "s", "t"),
+                         choiceNames = c("Road Map", "Satellite", "Terrain"),
+                         inline = TRUE)
         ),
         tags$div(class="col-xs-6 col-md-3 col-lg-3", style="height:100%",
             h3("Data Table"),
@@ -45,33 +49,24 @@ ui <- bootstrapPage(
         ),
         tags$div(id="compareNodes",class="col-xs-12 col-md-6 col-lg-6",
             tags$div(class="col-xs-6 col-md-3 col-lg-3", style="height:100%; border: 5px solid red;width:50%",
-            h3("Node1"),
-            placeholderImg
-         ),
-        tags$div(class="col-xs-6 col-md-3 col-lg-3",style="height:100%; border: 5px solid red;width:50%",
-            h3("Node2"),
-            placeholderImg
-        ),
-        tags$div(
-            tags$p("select timeframe to view"),
-            actionButton("nowTimeView", "Now "),
-            actionButton("hoursTimeView", " Last 24 Hours"),
-            actionButton("daysTimeView", "Last 7 Days")
-        )
+                h3("Node1"),
+                placeholderImg
+             ),
+            tags$div(class="col-xs-6 col-md-3 col-lg-3",style="height:100%; border: 5px solid red;width:50%",
+                h3("Node2"),
+                placeholderImg
+            ),
+            tags$div(
+                tags$p("select timeframe to view"),
+                actionButton("nowTimeView", "Now "),
+                actionButton("hoursTimeView", " Last 24 Hours"),
+                actionButton("daysTimeView", "Last 7 Days")
+            )
         ),
         tags$div(class="col-md-12 col-lg-12 col-xs-4",
             tags$div(
-                tags$p("Filter Options"),
-                actionButton("so2Filter", "SO2"),
-                actionButton("h2sFilter", "H2S"),
-                actionButton("o3Filter", "O3"),
-                actionButton("no2Filter", "NO2"),
-                actionButton("coFilter", "CO"),
-                actionButton("pm2Filter", "PM2.5"),
-                actionButton("pm10Filer", "PM10"),
-                actionButton("tempFilter", "Temperature"),
-                actionButton("lightFilter", "Light Intensity"),
-                actionButton("humFilter", "Humidity")
+                checkboxGroupInput("filters", "Filter Options", inline = TRUE,
+                                   choices = filterList, selected=filterList)
             ),
             tags$p(
                 "this dashboard was created by Dylan Vo, Wilfried Bedu, William Toher. It uses data from",
@@ -82,6 +77,8 @@ ui <- bootstrapPage(
                 tags$a(href="https://cbedu2.github.io/CS424/Projects/Project3/index.html","Project Description page")
             )
         )
+      ),
+      verbatimTextOutput("testarea")
     )
-  ))
+  )
 ui
