@@ -24,7 +24,7 @@ server <- shinyServer(function(input, output, session) {
   observeEvent(input$moreInfoModalButton, {
     showModal(modalDialog(
       HTML("<p>
-            This dashboard uses data from <a href=\"https://arrayofthings.github.io\">ArrayOfThings</a> and <a href=\"https://darksky.net/dev\"
+            This dashboard uses data from <a href=\"https://arrayofthings.github.io\">ArrayOfThings</a> and <a href=\"https://darksky.net/dev\">Dark Sky</a>
             to display information about pollutants and weather data from the city of chicago.<br/>
            </p>
            <h3>Authors</h3>

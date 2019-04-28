@@ -20,7 +20,7 @@ placeholderImg <- renderImage({
        contentType = 'image/png',
        width = 400,
        height = 300,
-       alt = "This is alternate text")
+       alt = "placeholder Image")
 }, deleteFile = TRUE)
 
 
@@ -74,7 +74,7 @@ ui <- bootstrapPage(
                         "This dashboard was created by Dylan Vo, Wilfried Bedu, William Toher. It uses data from",
                         tags$a(href="https://darksky.net/dev","Darksky"),
                         "and",
-                        tags$a(href="#","things"),
+                        tags$a(href="https://arrayofthings.github.io","Array of Things"),
                         "more information available at our",
                         tags$a(href="https://cbedu2.github.io/CS424/Projects/Project3/index.html","Project Description page")
                       ),
