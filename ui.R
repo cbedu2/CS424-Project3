@@ -2,6 +2,9 @@ library(shinydashboard)
 library(leaflet)
 library(DT)
 
+filterList <- c("SO2", "H2S", "O3", "NO2", "CO", "PM2.5", "PM10",
+                "Temperature", "Light Intensity", "Humidity")
+
 placeholderImg <- renderImage({
   # A temp file to save the output.
   # This file will be removed later by renderImage
@@ -79,16 +82,8 @@ ui <- bootstrapPage(
         class="col-md-12 col-lg-12 col-xs-4",
         tags$div(
           tags$p("Filter Options"),
-          actionButton("so2Filter", "SO2"),
-          actionButton("h2sFilter", "H2S"),
-          actionButton("o3Filter", "O3"),
-          actionButton("no2Filter", "NO2"),
-          actionButton("coFilter", "CO"),
-          actionButton("pm2Filter", "PM2.5"),
-          actionButton("pm10Filer", "PM10"),
-          actionButton("tempFilter", "Temperature"),
-          actionButton("lightFilter", "Light Intensity"),
-          actionButton("humFilter", "Humidity")
+          checkboxGroupInput("filters", "Filter Options", inline = TRUE,
+                             choices = filterList, selected=filterList)
         ),
         tags$p(
           "this dashboard was created by Dylan Vo, Wilfried Bedu, William Toher. It uses data from",
@@ -97,7 +92,8 @@ ui <- bootstrapPage(
           tags$a(href="#","things")
         )
       )
-    )
+    ),
+    verbatimTextOutput("testarea")
   )
 ))
 ui
