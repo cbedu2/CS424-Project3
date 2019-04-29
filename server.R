@@ -6,6 +6,7 @@ library(future)
 source("barChart.R")
 source("viewAotData.R")
 source("query.R")
+source("lines.R")
 
 pollutantsensors <- c("chemsense.co.concentration",
                      "chemsense.h2s.concentration",
@@ -79,7 +80,58 @@ server <- shinyServer(function(input, output, session) {
       dplyr::filter(isLive) %>%
       dplyr::select(vsn, address, CO, H2S, NO2, O3, SO2, Temp, Humidity, Intensity)
   })
+
+   df1 <- ls.observations(filters = list(
+       node = '004',
+       sensor = 'chemsense.co.concentration',
+       timestamp = 'ge:2019-04-29T00:00:00',
+       size = 2000
+  ))
+  lineChart <- weeklyLineChart(df1,"m")
+  output$lineCharta1 <- renderPlot(lineChart)
+  output$lineCharta2 <- renderPlot(lineChart)
+  output$lineCharta3 <- renderPlot(lineChart)
+  output$lineCharta4 <- renderPlot(lineChart)
+  output$lineCharta5 <- renderPlot(lineChart)
+  output$lineCharta6 <- renderPlot(lineChart)
+  output$lineCharta7 <- renderPlot(lineChart)
+  output$lineCharta8 <- renderPlot(lineChart)
+  output$lineCharta9 <- renderPlot(lineChart)
+  output$lineCharta10 <- renderPlot(lineChart)
   
+  output$lineChartb1 <- renderPlot(lineChart)
+  output$lineChartb2 <- renderPlot(lineChart)
+  output$lineChartb3 <- renderPlot(lineChart)
+  output$lineChartb4 <- renderPlot(lineChart)
+  output$lineChartb5 <- renderPlot(lineChart)
+  output$lineChartb6 <- renderPlot(lineChart)
+  output$lineChartb7 <- renderPlot(lineChart)
+  output$lineChartb8 <- renderPlot(lineChart)
+  output$lineChartb9 <- renderPlot(lineChart)
+  output$lineCharta10 <- renderPlot(lineChart)
+  
+  output$lineChartac1 <- renderPlot(lineChart)
+  output$lineChartac2 <- renderPlot(lineChart)
+  output$lineChartac3 <- renderPlot(lineChart)
+  output$lineChartac4 <- renderPlot(lineChart)
+  output$lineChartac5 <- renderPlot(lineChart)
+  output$lineChartac6 <- renderPlot(lineChart)
+  output$lineChartac7 <- renderPlot(lineChart)
+  output$lineChartac8 <- renderPlot(lineChart)
+  output$lineChartac9 <- renderPlot(lineChart)
+  output$lineChartac10 <- renderPlot(lineChart)
+  
+  output$lineChartbc1 <- renderPlot(lineChart)
+  output$lineChartbc2 <- renderPlot(lineChart)
+  output$lineChartbc3 <- renderPlot(lineChart)
+  output$lineChartbc4 <- renderPlot(lineChart)
+  output$lineChartbc5 <- renderPlot(lineChart)
+  output$lineChartbc6 <- renderPlot(lineChart)
+  output$lineChartbc7 <- renderPlot(lineChart)
+  output$lineChartbc8 <- renderPlot(lineChart)
+  output$lineChartbc9 <- renderPlot(lineChart)
+  output$lineChartbc10 <- renderPlot(lineChart)
+
   # Render table the first time, and if filters changes
   observe({
     output$table <- renderDataTable(v$tblNodes, options = list(pageLength=10))
@@ -108,6 +160,7 @@ server <- shinyServer(function(input, output, session) {
               <li>library(AotClient)</li>
               <li>library(shiny)</li>
               <li>library(shinydashboard)</li>
+              <li>library(future)</li>
            </ul>
            <p>you can read more about how this project was created using R and Shiny at our <a href=\"https://cbedu2.github.io/CS424/Projects/Project3/index.html\">webpage</a></p>
            "),
