@@ -59,8 +59,8 @@ ui <- bootstrapPage(
                       tags$div(
                         #tags$p("select timeframe to view"),
                         radioButtons("timeframe", "Timeframe:",
-                                     choiceValues=c("n", "d", "w"),
-                                     choiceNames=c("Now", "Last 24 Hours", "Last 7 Days"))
+                                     choiceValues=c(0.00069444444, 1, 7),
+                                     choiceNames=c("Now", "Last 24 Hours", "Last 7 Days"),inline =TRUE)
                       )
              ),
              tags$div(class="col-md-12 col-lg-12 col-xs-4",
