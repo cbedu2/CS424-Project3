@@ -13,7 +13,7 @@ formatDate <- function(daysAgoEpoch){
     paste("ge:",format.Date(datetime, "%Y"),"-",format.Date(datetime, "%m"),"-",format.Date(datetime, "%d"),"T",format.Date(datetime, "%H"),":",format.Date(datetime, "%m"),":",second(datetime),sep="")
   )
 }
-getXDaysAgoISO8601 <-function(days){
+getXDaysAgoISO8601 <-function(days=0){
   epoch = as.integer(Sys.time())
   daysAgoEpoch = epoch - 84400*days
   return(formatDate(daysAgoEpoch))
@@ -41,5 +41,5 @@ queryBuilder <- function(sensorType="", timestamp="",nodeId=""){
 }
 
 for(sensorType in sensorTypes){
-  results <- queryBuilder(sensorType,nodeId="004", timestamp="ge:2019-04-18T00:00:00")
+  results <- queryBuilder(sensorType,nodeId="004", timestamp=getXDaysAgoISO8601())
 }
