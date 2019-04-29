@@ -3,11 +3,25 @@ library(DT)
 library(leaflet)
 library(sp)
 
+sensorpaths <- c("chemsense.co.concentration",
+                 "chemsense.h2s.concentration",
+                 "chemsense.no2.concentration",
+                 "chemsense.o3.concentration",
+                 "chemsense.so2.concentration",
+                 "metsense.pr103j2.temperature",
+                 "metsense.hih4030.humidity",
+                 "lightsense.tsl260rd.intensity")
+
 source("viewAotData.R")
+source("query.R")
 
 v <- reactiveValues()
 v$nodes <- nodes
 v$selNodes <- c("", "")  # Current, Previous
+
+v$data1 <- NULL
+v$data2 <- NULL
+v$whichData <- 1
 
 mapIcons <- iconList(
   redStar = makeIcon(iconUrl="./assets/chicagostar25.png", iconWidth=20, iconHeight=25),
@@ -144,12 +158,35 @@ server <- shinyServer(function(input, output, session) {
   })
   
   # On node selection, get data from API
+  observe({
+    if(!is.null(v$selNodes[1]) & v$selNodes[1] != "") {
+      w <- isolate(v$whichData)
+      dateStr <- getXDaysAgoISO8601(0.001)
+      data <- sapply(sensorpaths, queryBuilder, dateStr, v$selNodes[1])
+      
+      
+      
+      print(data)
+      if (w == 1) {
+        v$data1 <- data
+        v$whichData <- 2
+      } else {
+        v$data2 <- data
+        v$whichData <- 1
+      }
+    }
+  })
+  
+  output$barGraph1 <- renderPlot({
+    pollutantsBar()
+  })
   
   # Draw graphs and table
 
   output$testarea <- renderPrint({
     #v$selNodes
-    input$filters
+    #input$filters
+    sapply(v$data1, head, n=10)
   })
 })
 

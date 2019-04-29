@@ -2,7 +2,20 @@ library(AotClient)
 library(lubridate)
 
 query <- function(filters){
-  return(ls.observations(filters = filters))
+  ls.observations(filters = filters)
+  # tryCatch(
+  #   ls.observations(filters = filters),
+  #   warning=function(w) {
+  #     print("[Warn] ls.observations failed with filters:")
+  #     print(filters)
+  #     data.frame()
+  #   },
+  #   error=function(e) {
+  #     print("[Err] ls.observations failed with filters:")
+  #     print(filters)
+  #     data.frame()
+  #   }
+  # )
 }
 
 sensorTypes <- c("metsense.bmp180.temperature")
@@ -20,18 +33,18 @@ getXDaysAgoISO8601 <-function(days=0){
 }
 
 
-queryBuilder <- function(sensorType="", timestamp="",nodeId=""){
+queryBuilder <- function(sensorType="", timestamp="",nodeId="", limit=200){
   filters <- list(
     node =nodeId,
     sensor= sensorType,
     timestamp = timestamp,
-    size=20000,
-    page=1 
+    size=limit,
+    page=1
   )
   data1 = query(filters)[,-(5:9),drop=FALSE]
   len <- nrow(data1)
   #will fail if entire dataset has exactly 20000 rows this is bad code but the fix needs to happen at at API level
-  if( len == 20000){
+  if( len == limit){
     filters$page <- 2
     data2 <- query(filters)[,-(5:9),drop=FALSE]
     return(rbind(data1,data2))
@@ -40,6 +53,6 @@ queryBuilder <- function(sensorType="", timestamp="",nodeId=""){
   }
 }
 
-for(sensorType in sensorTypes){
-  results <- queryBuilder(sensorType,nodeId="004", timestamp=getXDaysAgoISO8601())
-}
+# for(sensorType in sensorTypes){
+#   results <- queryBuilder(sensorType,nodeId="004", timestamp=getXDaysAgoISO8601())
+# }
