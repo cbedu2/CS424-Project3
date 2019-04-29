@@ -3,13 +3,13 @@ library(DT)
 library(dplyr)
 library(stringr)
 
-sensors <- ls.sensors()
-nodes <- ls.nodes()
+if (!exists("sensors")) sensors <- ls.sensors()
+if (!exists("nodes")) nodes <- ls.nodes()
 
 # Convert factors to strings so comparisons work
 nodes$vsn <- sapply(nodes$vsn, as.character)
 
-observations <-ls.observations(filters=list(size=1000))
+if (!exists("observations")) observations <-ls.observations(filters=list(size=1000))
 
 latlng <- nodes$location.geometry$coordinates %>%
           unlist() %>%
