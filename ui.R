@@ -1,6 +1,7 @@
 library(shinydashboard)
 library(leaflet)
 library(DT)
+library(future)
 
 filterList <- c("SO2", "H2S", "O3", "NO2", "CO",
                 "Temp", "Intensity", "Humidity")
@@ -35,7 +36,7 @@ ui <- bootstrapPage(
     css,
     h2("The Air I Breathe"),
     tags$div(id="mainpage", class="col-12",
-             tags$div(class="col-xs-6 col-md-3 col-lg-3", style="height:100%",
+             tags$div(class="col-xs-6 col-md-2 col-lg-2", style="height:100%; padding: 0",
                       h3("Interactive Map"),
                       leafletOutput("map",height=600),
                       radioButtons("mapTiles", "Map Background",
@@ -43,24 +44,72 @@ ui <- bootstrapPage(
                                    choiceNames = c("Road Map", "Satellite", "Terrain"),
                                    inline = TRUE)
              ),
-             tags$div(class="col-xs-6 col-md-3 col-lg-3", style="height:100%",
+             tags$div(class="col-xs-6 col-md-2 col-lg-2", style="height:100%; padding: 0",
                       h3("Data Table"),
                       DT::dataTableOutput("table")
              ),
-             tags$div(id="compareNodes",class="col-xs-12 col-md-6 col-lg-6",
-                      tags$div(class="col-xs-6 col-md-3 col-lg-3", style="height:100%; border: 5px solid red;width:50%",
+             tags$div(id="compareNodes",class="col-xs-12 col-md-8 col-lg-8",
+                      tags$div(class="col-xs-6 col-md-4 col-lg-4", style="height:100%; width:50%; padding: 0",
                                h3("Node1"),
-                               placeholderImg
+                               h4("Now"),
+                               plotOutput("testBarChart1"),
+                               h4("last 24 Hours"),
+                               tabsetPanel(type = "tabs",
+                                           tabPanel("SO2", plotOutput("testBarChart1")),
+                                           tabPanel("H2S", plotOutput("testBarChart1")),
+                                           tabPanel("O3", plotOutput("testBarChart1")),
+                                           tabPanel("NO2", plotOutput("testBarChart1")),
+                                           tabPanel("CO", plotOutput("testBarChart1")),
+                                           tabPanel("PM2.5", plotOutput("testBarChart1")),
+                                           tabPanel("PM10", plotOutput("testBarChart1")),
+                                           tabPanel("Temp", plotOutput("testBarChart1")),
+                                           tabPanel("Light ", plotOutput("testBarChart1")),
+                                           tabPanel("humidity ",plotOutput("testBarChart1"))
+                               ),
+                               h4("last 7 Days"),
+                               tabsetPanel(type = "tabs",
+                                           tabPanel("SO2", plotOutput("testBarChart1")),
+                                           tabPanel("H2S", plotOutput("testBarChart1")),
+                                           tabPanel("O3", plotOutput("testBarChart1")),
+                                           tabPanel("NO2", plotOutput("testBarChart1")),
+                                           tabPanel("CO", plotOutput("testBarChart1")),
+                                           tabPanel("PM2.5", plotOutput("testBarChart1")),
+                                           tabPanel("PM10", plotOutput("testBarChart1")),
+                                           tabPanel("Temp", plotOutput("testBarChart1")),
+                                           tabPanel("Light ", plotOutput("testBarChart1")),
+                                           tabPanel("humidity ",plotOutput("testBarChart1"))
+                               )
                       ),
-                      tags$div(class="col-xs-6 col-md-3 col-lg-3",style="height:100%; border: 5px solid red;width:50%",
+                      tags$div(class="col-xs-6 col-md-4 col-lg-4", style="height:100%; width:50%; padding: 0",
                                h3("Node2"),
-                               placeholderImg
-                      ),
-                      tags$div(
-                        #tags$p("select timeframe to view"),
-                        radioButtons("timeframe", "Timeframe:",
-                                     choiceValues=c(0.00069444444, 1, 7),
-                                     choiceNames=c("Now", "Last 24 Hours", "Last 7 Days"),inline =TRUE)
+                               h4("Now"),
+                               plotOutput("testBarChart1"),
+                               h4("last 24 Hours"),
+                               tabsetPanel(type = "tabs",
+                                           tabPanel("SO2", plotOutput("testBarChart1")),
+                                           tabPanel("H2S", plotOutput("testBarChart1")),
+                                           tabPanel("O3", plotOutput("testBarChart1")),
+                                           tabPanel("NO2", plotOutput("testBarChart1")),
+                                           tabPanel("CO", plotOutput("testBarChart1")),
+                                           tabPanel("PM2.5", plotOutput("testBarChart1")),
+                                           tabPanel("PM10", plotOutput("testBarChart1")),
+                                           tabPanel("Temp", plotOutput("testBarChart1")),
+                                           tabPanel("Light ", plotOutput("testBarChart1")),
+                                           tabPanel("humidity ",plotOutput("testBarChart1"))
+                               ),
+                               h4("last 7 Days"),
+                               tabsetPanel(type = "tabs",
+                                           tabPanel("SO2", plotOutput("testBarChart1")),
+                                           tabPanel("H2S", plotOutput("testBarChart1")),
+                                           tabPanel("O3", plotOutput("testBarChart1")),
+                                           tabPanel("NO2", plotOutput("testBarChart1")),
+                                           tabPanel("CO", plotOutput("testBarChart1")),
+                                           tabPanel("PM2.5", plotOutput("testBarChart1")),
+                                           tabPanel("PM10", plotOutput("testBarChart1")),
+                                           tabPanel("Temp", plotOutput("testBarChart1")),
+                                           tabPanel("Light ", plotOutput("testBarChart1")),
+                                           tabPanel("humidity ",plotOutput("testBarChart1"))
+                               )
                       )
              ),
              tags$div(class="col-md-12 col-lg-12 col-xs-4",
