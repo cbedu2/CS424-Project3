@@ -6,13 +6,13 @@ library(stringr)
 library(ggplot2)
 library(plotly)
 
-obs <- ls.observations(filters = list(
+df1 <- ls.observations(filters = list(
   node = '004',
   sensor = 'chemsense.co.concentration',
   timestamp = 'ge:2019-04-29T00:00:00',
   size = 2000
 ))
-obs2 <- ls.observations(filters = list(
+df2 <- ls.observations(filters = list(
   node = '01C',
   sensor = 'chemsense.co.concentration',
   timestamp = 'ge:2019-04-22T00:00:00',

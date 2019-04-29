@@ -5,7 +5,7 @@ library(sp)
 library(future)
 source("barChart.R")
 source("viewAotData.R")
-
+source("lines.R")
 v <- reactiveValues()
 v$nodes <- nodes
 v$selNodes <- c("", "")  # Current, Previous
@@ -30,6 +30,56 @@ server <- shinyServer(function(input, output, session) {
   output$etcChart2 <- renderPlot(
     etcChart("004","m")
     )
+   df1 <- ls.observations(filters = list(
+       node = '004',
+       sensor = 'chemsense.co.concentration',
+       timestamp = 'ge:2019-04-29T00:00:00',
+       size = 2000
+  ))
+  lineChart <- weeklyLineChart(df1,"m")
+  output$lineCharta1 <- renderPlot(lineChart)
+  output$lineCharta2 <- renderPlot(lineChart)
+  output$lineCharta3 <- renderPlot(lineChart)
+  output$lineCharta4 <- renderPlot(lineChart)
+  output$lineCharta5 <- renderPlot(lineChart)
+  output$lineCharta6 <- renderPlot(lineChart)
+  output$lineCharta7 <- renderPlot(lineChart)
+  output$lineCharta8 <- renderPlot(lineChart)
+  output$lineCharta9 <- renderPlot(lineChart)
+  output$lineCharta10 <- renderPlot(lineChart)
+  
+  output$lineChartb1 <- renderPlot(lineChart)
+  output$lineChartb2 <- renderPlot(lineChart)
+  output$lineChartb3 <- renderPlot(lineChart)
+  output$lineChartb4 <- renderPlot(lineChart)
+  output$lineChartb5 <- renderPlot(lineChart)
+  output$lineChartb6 <- renderPlot(lineChart)
+  output$lineChartb7 <- renderPlot(lineChart)
+  output$lineChartb8 <- renderPlot(lineChart)
+  output$lineChartb9 <- renderPlot(lineChart)
+  output$lineCharta10 <- renderPlot(lineChart)
+  
+  output$lineChartac1 <- renderPlot(lineChart)
+  output$lineChartac2 <- renderPlot(lineChart)
+  output$lineChartac3 <- renderPlot(lineChart)
+  output$lineChartac4 <- renderPlot(lineChart)
+  output$lineChartac5 <- renderPlot(lineChart)
+  output$lineChartac6 <- renderPlot(lineChart)
+  output$lineChartac7 <- renderPlot(lineChart)
+  output$lineChartac8 <- renderPlot(lineChart)
+  output$lineChartac9 <- renderPlot(lineChart)
+  output$lineChartac10 <- renderPlot(lineChart)
+  
+  output$lineChartbc1 <- renderPlot(lineChart)
+  output$lineChartbc2 <- renderPlot(lineChart)
+  output$lineChartbc3 <- renderPlot(lineChart)
+  output$lineChartbc4 <- renderPlot(lineChart)
+  output$lineChartbc5 <- renderPlot(lineChart)
+  output$lineChartbc6 <- renderPlot(lineChart)
+  output$lineChartbc7 <- renderPlot(lineChart)
+  output$lineChartbc8 <- renderPlot(lineChart)
+  output$lineChartbc9 <- renderPlot(lineChart)
+  output$lineChartbc10 <- renderPlot(lineChart)
   
   # Render table the first time, and if nodes changes
   output$table <- renderDataTable(v$nodes, options = list(pageLength=10))
