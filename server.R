@@ -56,6 +56,7 @@ server <- shinyServer(function(input, output, session) {
               <li>library(AotClient)</li>
               <li>library(shiny)</li>
               <li>library(shinydashboard)</li>
+              <li>library(future)</li>
            </ul>
            <p>you can read more about how this project was created using R and Shiny at our <a href=\"https://cbedu2.github.io/CS424/Projects/Project3/index.html\">webpage</a></p>
            "),
