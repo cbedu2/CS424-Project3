@@ -9,8 +9,9 @@ sensorTypes <- c("metsense.bmp180.temperature")
 
 
 get7DaysAgoISO8601 <-function(){
-  epoch <- as.integer(Sys.time())
-
+  epoch = as.integer(Sys.time())
+  DaysAgoEpoch = epoch - 84400
+  as.POSIXct(DaysAgoEpoch, origin="1970-01-01")
 }
 
 queryBuilder <- function(sensorType="", timestamp="",nodeId=""){
