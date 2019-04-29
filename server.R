@@ -19,17 +19,21 @@ mapIcons <- iconList(
 server <- shinyServer(function(input, output, session) {
   #comparingNodes
   
-  output$testBarChart1 <- renderPlot(
-    pollutantsChart("004","m"))
-  output$testBarChart2 <- renderPlot(
-    pollutantsChart("004","m"))
-  pl2 <-
-  output$etcChart1 <- renderPlot(
-    etcChart("004","m")
-    )
-  output$etcChart2 <- renderPlot(
-    etcChart("004","m")
-    )
+  output$testBarChart1 <- renderPlot(pollutantsChart("004","m"))
+  output$testBarChart2 <- renderPlot(pollutantsChart("004","m"))
+  output$etcChart1 <- renderPlot(etcChart("004","m"))
+  output$etcChart2 <- renderPlot(etcChart("004","m"))
+  
+  observe({
+    if (!is.na(v$selNodes[1]) & v$selNodes[1] != "") {
+      output$testBarChart1 <- renderPlot(pollutantsChart(v$selNodes[1], input$units))
+      output$etcChart1 <- renderPlot(etcChart(v$selNodes[1], input$units))
+    }
+    if (!is.na(v$selNodes[2]) & v$selNodes[2] != "") {
+      output$testBarChart2 <- renderPlot(pollutantsChart(v$selNodes[2], input$units))
+      output$etcChart2 <- renderPlot(etcChart(v$selNodes[2], input$units))
+    }
+  })
   
   # Render table the first time, and if nodes changes
   output$table <- renderDataTable(v$nodes, options = list(pageLength=10))
