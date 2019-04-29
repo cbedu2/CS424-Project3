@@ -7,21 +7,26 @@ query <- function(filters){
 
 sensorTypes <- c("metsense.bmp180.temperature")
 
+
+get7DaysAgoISO8601 <-function(){
+  epoch <- as.integer(Sys.time())
+
+}
+
 queryBuilder <- function(sensorType="", timestamp="",nodeId=""){
   filters <- list(
     node =nodeId,
-    sensor= sensor,
+    sensor= sensorType,
     timestamp = timestamp,
     size=20000,
     page=1 
   )
   data1 = query(filters)[,-(5:9),drop=FALSE]
   len <- nrow(data1)
-  print(len)
+  #will fail if entire dataset has exactly 20000 rows this is bad code but the fix needs to happen at at API level
   if( len == 20000){
     filters$page <- 2
     data2 <- query(filters)[,-(5:9),drop=FALSE]
-    print(nrow(data2))
     return(rbind(data1,data2))
   }else{
     return(data1)
@@ -29,5 +34,5 @@ queryBuilder <- function(sensorType="", timestamp="",nodeId=""){
 }
 
 for(sensorType in sensorTypes){
-  results <- queryBySensorType(sensorType,timestamp="ge:2019-04-18T00:00:00","004")
+  results <- queryBuilder(sensorType,nodeId="004", timestamp="ge:2019-04-18T00:00:00")
 }
