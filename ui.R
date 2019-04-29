@@ -65,9 +65,11 @@ ui <- bootstrapPage(
              ),
              tags$div(class="col-md-12 col-lg-12 col-xs-4",
                       tags$div(
-                        checkboxGroupInput("filters", "Filter Options", inline = TRUE,
+                        tags$h3("Filter Options"),
+                        checkboxGroupInput("filters",label="",inline = TRUE,
                                            choices = filterList, selected=filterList),
-                        radioButtons("units", "Units", inline = TRUE,
+                        tags$h3("Units"),
+                        radioButtons("units",label="",inline = TRUE,
                                      choiceValues = c("i", "m"), choiceNames = c("Imperial", "Metric"))
                       ),
                       tags$p(
