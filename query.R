@@ -5,7 +5,6 @@ query <- function(filters){
   return(ls.observations(filters = filters))
 }
 
-sensorTypes <- c("metsense.bmp180.temperature")
 
 formatDate <- function(daysAgoEpoch){
   datetime <- as_datetime(daysAgoEpoch)
@@ -38,8 +37,4 @@ queryBuilder <- function(sensorType="", timestamp="",nodeId=""){
   }else{
     return(data1)
   }
-}
-
-for(sensorType in sensorTypes){
-  results <- queryBuilder(sensorType,nodeId="004", timestamp=getXDaysAgoISO8601())
 }
