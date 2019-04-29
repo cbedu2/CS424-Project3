@@ -2,8 +2,8 @@ library(shinydashboard)
 library(leaflet)
 library(DT)
 
-filterList <- c("SO2", "H2S", "O3", "NO2", "CO", "PM2.5", "PM10",
-                "Temperature", "Light Intensity", "Humidity")
+filterList <- c("SO2", "H2S", "O3", "NO2", "CO",
+                "Temp", "Intensity", "Humidity")
 
 placeholderImg <- renderImage({
   # A temp file to save the output.

@@ -11,7 +11,8 @@ v$selNodes <- c("", "")  # Current, Previous
 
 mapIcons <- iconList(
   redStar = makeIcon(iconUrl="./assets/chicagostar25.png", iconWidth=20, iconHeight=25),
-  blueStar = makeIcon(iconUrl="./assets/chicagostar25_lightblue.png", iconWidth=20, iconHeight=25)
+  blueStar = makeIcon(iconUrl="./assets/chicagostar25_lightblue.png", iconWidth=20, iconHeight=25),
+  greyStar = makeIcon(iconUrl="./assets/chicagostar25_grey.png", iconWidth=20, iconHeight=25)
 )
 
 server <- shinyServer(function(input, output, session) {
@@ -68,11 +69,14 @@ server <- shinyServer(function(input, output, session) {
       addProviderTiles(tileset)
   })
 
-  # Update map icons on node selection
+  # Update map icons on node selection OR sensor filter change
   observe({
     n <- isolate(v$nodes)
-    n$icon <- with(n, ifelse(vsn %in% v$selNodes, "redStar", "blueStar"))
-    n$z <- with(n, ifelse(vsn %in% v$selNodes, 1000, 0)) # Draw selected nodes on top
+    n$isLive <- rowSums(n[input$filters]) > 0
+    n$icon <- with(n, ifelse(vsn %in% v$selNodes, "redStar",
+                             ifelse(isLive, "blueStar", "greyStar")))
+    n$z <- with(n, ifelse(vsn %in% v$selNodes, 1000, 
+                          ifelse(isLive, 500, 0))) # Draw selected nodes on top
     mapProxy %>%
       clearMarkers() %>%
       addMarkers(data=n, icon=~mapIcons[icon], layerId=~vsn, lat=~lat, lng=~lng,
@@ -138,9 +142,14 @@ server <- shinyServer(function(input, output, session) {
 
     tableProxy %>% selectRows(c(prevRowId, newRowId))
   })
+  
+  # On node selection, get data from API
+  
+  # Draw graphs and table
 
   output$testarea <- renderPrint({
-    v$selNodes
+    #v$selNodes
+    input$filters
   })
 })
 
