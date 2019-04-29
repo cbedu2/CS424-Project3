@@ -5,10 +5,26 @@ library(sp)
 library(future)
 source("barChart.R")
 source("viewAotData.R")
+source("query.R")
+
+pollutantsensors <- c("chemsense.co.concentration",
+                     "chemsense.h2s.concentration",
+                     "chemsense.no2.concentration",
+                     "chemsense.o3.concentration",
+                     "chemsense.so2.concentration")
+etcsensors <- c("metsense.pr103j2.temperature",
+                "metsense.hih4030.humidity",
+                "lightsense.tsl260rd.intensity")
 
 v <- reactiveValues()
 v$nodes <- nodes
+v$tblNodes <- nodes
 v$selNodes <- c("", "")  # Current, Previous
+
+v$curPollutantData <- data.frame()
+v$prevPollutantData <- data.frame()
+v$curEtcData <- data.frame()
+v$prevEtcData <- data.frame()
 
 mapIcons <- iconList(
   redStar = makeIcon(iconUrl="./assets/chicagostar25.png", iconWidth=20, iconHeight=25),
@@ -16,27 +32,59 @@ mapIcons <- iconList(
   greyStar = makeIcon(iconUrl="./assets/chicagostar25_grey.png", iconWidth=20, iconHeight=25)
 )
 
+getNow <- function(value, id) {ls.observations(filters=list(node=id, sensor=value, size=1))}
+
 server <- shinyServer(function(input, output, session) {
-  #comparingNodes
-  
-  output$testBarChart1 <- renderPlot(pollutantsChart("004","m"))
-  output$testBarChart2 <- renderPlot(pollutantsChart("004","m"))
-  output$etcChart1 <- renderPlot(etcChart("004","m"))
-  output$etcChart2 <- renderPlot(etcChart("004","m"))
   
   observe({
-    if (!is.na(v$selNodes[1]) & v$selNodes[1] != "") {
-      output$testBarChart1 <- renderPlot(pollutantsChart(v$selNodes[1], input$units))
-      output$etcChart1 <- renderPlot(etcChart(v$selNodes[1], input$units))
+    if (nrow(v$curPollutantData) < 1 | !("sensor_path" %in% colnames(v$curPollutantData))) {
+      #output$testBarChart1 <- renderPlot()
+      output$node1Err1 <- renderText("No data for selected node!")
+    } else {
+      output$node1Err1 <- renderText("")
+      output$testBarChart1 <- renderPlot(pollutantsChart(v$curPollutantData, input$units))
     }
-    if (!is.na(v$selNodes[2]) & v$selNodes[2] != "") {
-      output$testBarChart2 <- renderPlot(pollutantsChart(v$selNodes[2], input$units))
-      output$etcChart2 <- renderPlot(etcChart(v$selNodes[2], input$units))
+  })
+  observe({
+    if (nrow(v$curEtcData) < 1 | !("sensor_path" %in% colnames(v$curEtcData))) {
+      output$node1Err2 <- renderText("No data for selected node!")
+      #output$etcChart1 <- renderPlot()
+    } else {
+      output$node1Err2 <- renderText("")
+      output$etcChart1 <- renderPlot(etcChart(v$curEtcData, input$units))
+    }
+  })
+
+  observe({
+    if (nrow(v$prevPollutantData) < 1 | !("sensor_path" %in% colnames(v$prevPollutantData))) {
+      output$node2Err1 <- renderText("No data for selected node!")
+    } else {
+      output$testBarChart2 <- renderPlot(pollutantsChart(v$prevPollutantData, input$units))
+    }
+  })
+  observe({
+    if (nrow(v$prevEtcData) < 1 | !("sensor_path" %in% colnames(v$prevEtcData))) {
+      output$node2Err2 <- renderText("No data for selected node!")
+    } else {
+      output$etcChart2 <- renderPlot(etcChart(v$prevEtcData, input$units))
     }
   })
   
-  # Render table the first time, and if nodes changes
-  output$table <- renderDataTable(v$nodes, options = list(pageLength=10))
+  # Update table rows when filters change
+  observe({
+    tbl <- isolate(v$nodes)
+    tbl$isLive <- rowSums(tbl[input$filters]) >= length(input$filters)
+    
+    v$tblNodes <- tbl %>%
+      dplyr::filter(isLive) %>%
+      dplyr::select(vsn, address, CO, H2S, NO2, O3, SO2, Temp, Humidity, Intensity)
+  })
+  
+  # Render table the first time, and if filters changes
+  observe({
+    output$table <- renderDataTable(v$tblNodes, options = list(pageLength=10))
+  })
+  # output$table <- renderDataTable(v$nodes, options = list(pageLength=10))
   tableProxy <- dataTableProxy("table")
 
   # Pop up window with credit information
@@ -91,7 +139,7 @@ server <- shinyServer(function(input, output, session) {
   # Update map icons on node selection OR sensor filter change
   observe({
     n <- isolate(v$nodes)
-    n$isLive <- rowSums(n[input$filters]) > 0
+    n$isLive <- rowSums(n[input$filters]) >= length(input$filters)
     n$icon <- with(n, ifelse(vsn %in% v$selNodes, "redStar",
                              ifelse(isLive, "blueStar", "greyStar")))
     n$z <- with(n, ifelse(vsn %in% v$selNodes, 1000, 
@@ -112,7 +160,7 @@ server <- shinyServer(function(input, output, session) {
 
   # Update selected nodes on table click
   observe({
-    n <- isolate(v$nodes)                     # No dependency on nodes (should trigger via selection event)
+    n <- isolate(v$tblNodes)                     # No dependency on nodes (should trigger via selection event)
     clickedRows <- input$table_rows_selected  # Dependency on table row selection
     newRowId <- tail(clickedRows, n=1)
     newNodeId <- n[newRowId, 1]
@@ -128,7 +176,7 @@ server <- shinyServer(function(input, output, session) {
 
   # Update table selected rows on node change
   observe({
-    n <- isolate(v$nodes)                     # No dependency on nodes
+    n <- isolate(v$tblNodes)                     # No dependency on nodes
     curNode <- v$selNodes[1]                  # Dependency on selNodes
 
     if (is.null(curNode) | curNode == "") {
@@ -162,13 +210,35 @@ server <- shinyServer(function(input, output, session) {
     tableProxy %>% selectRows(c(prevRowId, newRowId))
   })
   
-  # On node selection, get data from API
+  # Update titles on node change
+  observe({
+    output$node1Title <- renderText(ifelse(v$selNodes[1] == "", "...", paste("Node", v$selNodes[1])))
+    output$node2Title <- renderText(ifelse(is.na(v$selNodes[2]) | v$selNodes[2] == "",
+                                           "...", paste("Node", v$selNodes[2])))
+  })
   
-  # Draw graphs and table
+  # On node selection, get data from API
+  observe({
+    id <- v$selNodes[1]
+    print(id)
+    
+    if (id != "") {
+      pollutantDF <- simpleGetNow(pollutantsensors, id)
+      pollutantDF$value <- abs(pollutantDF$value)
+      
+      miscDF <- simpleGetNow(etcsensors, id)
 
+      v$prevPollutantData <- isolate(v$curPollutantData)
+      v$prevEtcData <- isolate(v$curEtcData)
+      v$curPollutantData <- pollutantDF
+      v$curEtcData <- miscDF
+    }
+  })
+  
   output$testarea <- renderPrint({
     #v$selNodes
-    input$filters
+    #v$curPollutantData
+    
   })
 })
 
