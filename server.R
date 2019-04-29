@@ -27,6 +27,33 @@ v$prevPollutantData <- data.frame()
 v$curEtcData <- data.frame()
 v$prevEtcData <- data.frame()
 
+v$curDaySO2 <- data.frame()
+v$curDayH2S <- data.frame()
+v$curDayO3 <- data.frame()
+v$curDayNO2 <- data.frame()
+v$curDayCO <- data.frame()
+
+
+v$prevDaySO2 <- data.frame()
+v$prevDayH2S <- data.frame()
+v$prevDayO3 <- data.frame()
+v$prevDayNO2 <- data.frame()
+v$prevDayCO <- data.frame()
+
+v$curWeekSO2 <- data.frame()
+v$curWeekH2S <- data.frame()
+v$curWeekO3 <- data.frame()
+v$curWeekNO2 <- data.frame()
+v$curWeekCO <- data.frame()
+
+
+v$prevWeekSO2 <- data.frame()
+v$prevWeekH2S <- data.frame()
+v$prevWeekO3 <- data.frame()
+v$prevWeekNO2 <- data.frame()
+v$prevWeekCO <- data.frame()
+
+
 mapIcons <- iconList(
   redStar = makeIcon(iconUrl="./assets/chicagostar25.png", iconWidth=20, iconHeight=25),
   blueStar = makeIcon(iconUrl="./assets/chicagostar25_lightblue.png", iconWidth=20, iconHeight=25),
