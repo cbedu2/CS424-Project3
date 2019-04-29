@@ -5,20 +5,6 @@ library(stringr)
 library(ggplot2)
 library(plotly)
 
-df <- data.frame(value = numeric(),
-                 sensor_path = character())
-sensorTypes <- c('chemsense.o3.concentration','chemsense.co.concentration','chemsense.h2s.concentration','chemsense.no2.concentration','chemsense.so2.concentration')
-for (value in sensorTypes){
-  newRow <- ls.observations(filters=list(
-    node = '004',
-    sensor = value,
-    size = 1
-  ))
-  newRow <- newRow %>%
-    dplyr::select(value,sensor_path)
-  df <- rbind(df,newRow)
-}
-ggplot(df,aes(x=sensor_path,y=value)) + geom_bar(stat='identity',width=.5)+ theme(axis.text.x=element_text(angle=60,hjust=1,vjust=0.5))
 pollutantsChart <- function(nodeID,metric){
   df <- data.frame(value = numeric(),
                    sensor_path = character())
@@ -31,21 +17,34 @@ pollutantsChart <- function(nodeID,metric){
     ))
     newRow <- newRow %>%
       dplyr::select(value,sensor_path)
+    if(metric = 's'){
+      newRow$value <- 0
+    }
     df <- rbind(df,newRow)
   }
   return(ggplot(df,aes(x=sensor_path,y=value)) + geom_bar(stat='identity',width=.5)+ theme(axis.text.x=element_text(angle=60,hjust=1,vjust=0.5)))
-  
 }
 etcChart <- function(nodeID, metric){
   df <- data.frame(value = numeric(),
                    sensor_path = character())
   sensorTypes <- c('metsense.pr103j2.temperature','metsense.hih4030.humidity','lightsense.tsl260rd.intensity')
   for (value in sensorTypes){
-    newRow <- ls.observations(filters=list(
-      node = nodeID,
-      sensor = value,
-      size = 1
-    ))
+    if(value == 'metsense.pr103j2.temperature' && metric == 'i'){
+      newRow <- ls.observations(filters=list(
+        node = nodeID,
+        sensor = value,
+        size = 1
+      ))
+      newRow$value <- (newRow$value*(9/5))+32
+    }
+    else{
+      newRow <- ls.observations(filters=list(
+        node = nodeID,
+        sensor = value,
+        size = 1
+      ))
+    }
+
     newRow <- newRow %>%
       dplyr::select(value,sensor_path)
     df <- rbind(df,newRow)
