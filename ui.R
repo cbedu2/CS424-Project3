@@ -57,10 +57,10 @@ ui <- bootstrapPage(
                                placeholderImg
                       ),
                       tags$div(
-                        tags$p("select timeframe to view"),
-                        actionButton("nowTimeView", "Now "),
-                        actionButton("hoursTimeView", " Last 24 Hours"),
-                        actionButton("daysTimeView", "Last 7 Days")
+                        #tags$p("select timeframe to view"),
+                        radioButtons("timeframe", "Timeframe:",
+                                     choiceValues=c("n", "d", "w"),
+                                     choiceNames=c("Now", "Last 24 Hours", "Last 7 Days"))
                       )
              ),
              tags$div(class="col-md-12 col-lg-12 col-xs-4",

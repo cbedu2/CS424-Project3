@@ -7,20 +7,19 @@ source("viewAotData.R")
 
 v <- reactiveValues()
 v$nodes <- nodes
-v$viewNode <- NULL
-v$cmpNodes <- NULL
+v$selNodes <- c("", "")  # Current, Previous
 
-starIcon <- makeIcon(
-  iconUrl = './assets/chicagostar25.png',
-  iconWidth = 20,
-  iconHeight = 25
+mapIcons <- iconList(
+  redStar = makeIcon(iconUrl="./assets/chicagostar25.png", iconWidth=20, iconHeight=25),
+  blueStar = makeIcon(iconUrl="./assets/chicagostar25_lightblue.png", iconWidth=20, iconHeight=25)
 )
 
 server <- shinyServer(function(input, output, session) {
-  # Render table the first time
-  output$table <- renderDataTable(v$nodes,
-                                  options = list(pageLength = 5))
-  
+  # Render table the first time, and if nodes changes
+  output$table <- renderDataTable(v$nodes, options = list(pageLength=10))
+  tableProxy <- dataTableProxy("table")
+
+  # Pop up window with credit information
   observeEvent(input$moreInfoModalButton, {
     showModal(modalDialog(
       HTML("<p>
@@ -47,72 +46,102 @@ server <- shinyServer(function(input, output, session) {
       easyClose = TRUE
     ))
   })
-  
+
   # Render map the first time
   output$map <- renderLeaflet({
-    # leaflet() %>% addProviderTiles(providers$CartoDB.Positron)
-    leaflet(v$nodes) %>%
+    print("Drawing map...")
+    leaflet() %>%
       addProviderTiles(providers$CartoDB.Positron) %>%
-      addMarkers(icon=starIcon, layerId=~vsn)
+      addMarkers(data=isolate(v$nodes), icon=mapIcons["blueStar"],
+                 layerId=~vsn, lat=~lat, lng=~lng)
   })
-  
+  mapProxy <- leafletProxy("map")
+
   # Update the map on tileset toggle
   observe({
     tileset <- switch(input$mapTiles,
                       "r" = providers$CartoDB.Positron,
                       "s" = providers$Esri.WorldImagery,
                       "t" = providers$Stamen.TopOSMRelief)
-    leafletProxy("map") %>% addProviderTiles(tileset)
+    mapProxy %>%
+      clearTiles() %>%
+      addProviderTiles(tileset)
   })
-  
+
+  # Update map icons on node selection
+  observe({
+    n <- isolate(v$nodes)
+    n$icon <- with(n, ifelse(vsn %in% v$selNodes, "redStar", "blueStar"))
+    n$z <- with(n, ifelse(vsn %in% v$selNodes, 1000, 0)) # Draw selected nodes on top
+    mapProxy %>%
+      clearMarkers() %>%
+      addMarkers(data=n, icon=~mapIcons[icon], layerId=~vsn, lat=~lat, lng=~lng,
+                 options=markerOptions(zIndexOffset=~z))
+  })
+
   # Update selected nodes on map click
   observe({
-    clickedMarker <- input$map_marker_click
-    curVal <- isolate(v$viewNode)
-    v$cmpNodes <- c(clickedMarker$id, curVal)
-    v$viewNode <- clickedMarker$id
+    clickedMarker <- input$map_marker_click   # Dependency on map markers
+    curNodes <- isolate(v$selNodes)           # No dependency on selNodes
+    curVal <- ifelse(length(curNodes) >= 1, curNodes[1], "")
+    v$selNodes <- c(clickedMarker$id, curVal) # Trigger updates on selNodes
   })
-  
+
   # Update selected nodes on table click
   observe({
-    clickedRows <- input$table_rows_selected
+    n <- isolate(v$nodes)                     # No dependency on nodes (should trigger via selection event)
+    clickedRows <- input$table_rows_selected  # Dependency on table row selection
     newRowId <- tail(clickedRows, n=1)
-    newNodeId <- v$nodes[newRowId, 1]
+    newNodeId <- n[newRowId, 1]
     
     if (length(clickedRows) > 1) {
       prevRowId <- tail(clickedRows, n=2)[1]
-      prevNodeId <- v$nodes[prevRowId, 1]
+      prevNodeId <- n[prevRowId, 1]
     } else {
-      prevNodeId <- NULL
+      prevNodeId <- ""
     }
-    v$cmpNodes <- c(newNodeId, prevNodeId)
-    v$viewNode <- newNodeId
+    v$selNodes <- c(newNodeId, prevNodeId)    # Trigger updates on selNodes
   })
-  
+
   # Update table selected rows on node change
   observe({
-    n <- isolate(v$nodes)
-    if (length(v$cmpNodes) > 0) {
-      newNodeId <- which(nodes == v$viewNode, arr.ind = TRUE)[1,1]
+    n <- isolate(v$nodes)                     # No dependency on nodes
+    curNode <- v$selNodes[1]                  # Dependency on selNodes
+
+    if (is.null(curNode) | curNode == "") {
+      # print("Selected node is null or blank")
+      newRowId <- NULL
     } else {
-      newNodeId <- NULL
+      # print(paste("Looking up recent id:", curNode))
+      foundRows <- which(n == curNode, arr.ind = TRUE)
+      if (length(foundRows) < 1) {
+        print(paste("ID:", curNode, "not found in table!"))
+        newRowId <- NULL
+      } else {
+        newRowId <- foundRows[1,1]
+      }
     }
-    if (length(v$cmpNodes) > 1) {
-      oldNodeId <- which(nodes == v$cmpNodes[2], arr.ind = TRUE)[1,1]
+
+    if (length(v$selNodes) > 1) {
+      prevNode <- v$selNodes[2]
+      # print(paste("Looking up previous id:", prevNode))
+      foundRowsPrev <- which(n == prevNode, arr.ind = TRUE)
+      if (length(foundRowsPrev) < 1) {
+        if (prevNode != "") print(paste("ID:", prevNode, "not found in table!"))
+        prevRowId <- NULL
+      } else {
+        prevRowId <- foundRowsPrev[1,1]
+      }
     } else {
-      oldNodeId <- NULL
+      prevRowId <- NULL
     }
-    
-    dataTableProxy("table") %>% selectRows(c(oldNodeId, newNodeId))
+
+    tableProxy %>% selectRows(c(prevRowId, newRowId))
   })
-  
-  
+
   output$testarea <- renderPrint({
-    v$cmpNodes
-    #input$table_rows_selected
+    v$selNodes
   })
-  
-  
 })
 
 server
