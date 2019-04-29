@@ -1,5 +1,5 @@
 library(AotClient)
-
+library(lubridate)
 
 query <- function(filters){
   return(ls.observations(filters = filters))
@@ -7,12 +7,18 @@ query <- function(filters){
 
 sensorTypes <- c("metsense.bmp180.temperature")
 
-
-get7DaysAgoISO8601 <-function(){
-  epoch = as.integer(Sys.time())
-  DaysAgoEpoch = epoch - 84400
-  as.POSIXct(DaysAgoEpoch, origin="1970-01-01")
+formatDate <- function(daysAgoEpoch){
+  datetime <- as_datetime(daysAgoEpoch)
+  return(
+    paste("ge:",format.Date(datetime, "%Y"),"-",format.Date(datetime, "%m"),"-",format.Date(datetime, "%d"),"T",format.Date(datetime, "%H"),":",format.Date(datetime, "%m"),":",second(datetime),sep="")
+  )
 }
+getXDaysAgoISO8601 <-function(days){
+  epoch = as.integer(Sys.time())
+  daysAgoEpoch = epoch - 84400*days
+  return(formatDate(daysAgoEpoch))
+}
+
 
 queryBuilder <- function(sensorType="", timestamp="",nodeId=""){
   filters <- list(
