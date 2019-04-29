@@ -60,6 +60,7 @@ server <- shinyServer(function(input, output, session) {
     if (nrow(v$prevPollutantData) < 1 | !("sensor_path" %in% colnames(v$prevPollutantData))) {
       output$node2Err1 <- renderText("No data for selected node!")
     } else {
+      output$node2Err1 <- renderText("")
       output$testBarChart2 <- renderPlot(pollutantsChart(v$prevPollutantData, input$units))
     }
   })
@@ -67,6 +68,7 @@ server <- shinyServer(function(input, output, session) {
     if (nrow(v$prevEtcData) < 1 | !("sensor_path" %in% colnames(v$prevEtcData))) {
       output$node2Err2 <- renderText("No data for selected node!")
     } else {
+      output$node2Err2 <- renderText("")
       output$etcChart2 <- renderPlot(etcChart(v$prevEtcData, input$units))
     }
   })
