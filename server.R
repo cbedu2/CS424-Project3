@@ -19,7 +19,15 @@ etcsensors <- c("metsense.pr103j2.temperature",
 
 v <- reactiveValues()
 v$nodes <- nodes
-v$tblNodes <- nodes
+v$tblNodes <- (function(){
+  f <- c("SO2", "H2S", "O3", "NO2", "CO",
+         "Temp", "Intensity", "Humidity")
+  tbl <- nodes
+  tbl$isLive <- rowSums(tbl[f]) >= length(f)
+  tbl %>%
+    dplyr::filter(isLive) %>%
+    dplyr::select(vsn, address, CO, H2S, NO2, O3, SO2, Temp, Humidity, Intensity)
+})()
 v$selNodes <- c("", "")  # Current, Previous
 
 v$curPollutantData <- data.frame()
@@ -37,6 +45,7 @@ getNow <- function(value, id) {ls.observations(filters=list(node=id, sensor=valu
 
 server <- shinyServer(function(input, output, session) {
   
+  # Draw bar graphs when nodes change
   observe({
     if (nrow(v$curPollutantData) < 1 | !("sensor_path" %in% colnames(v$curPollutantData))) {
       #output$testBarChart1 <- renderPlot()
@@ -72,9 +81,10 @@ server <- shinyServer(function(input, output, session) {
   })
   
   # Update table rows when filters change
-  observe({
+  observeEvent(input$filterBtn, {
+    f <- isolate(input$filters)
     tbl <- isolate(v$nodes)
-    tbl$isLive <- rowSums(tbl[input$filters]) >= length(input$filters)
+    tbl$isLive <- rowSums(tbl[f]) >= length(f)
     
     v$tblNodes <- tbl %>%
       dplyr::filter(isLive) %>%
@@ -133,9 +143,9 @@ server <- shinyServer(function(input, output, session) {
   output$lineChartbc10 <- renderPlot(lineChart)
 
   # Render table the first time, and if filters changes
-  observe({
+  #observe({
     output$table <- renderDataTable(v$tblNodes, options = list(pageLength=10))
-  })
+  #})
   # output$table <- renderDataTable(v$nodes, options = list(pageLength=10))
   tableProxy <- dataTableProxy("table")
 
@@ -188,19 +198,33 @@ server <- shinyServer(function(input, output, session) {
       clearTiles() %>%
       addProviderTiles(tileset)
   })
-
-  # Update map icons on node selection OR sensor filter change
-  observe({
-    n <- isolate(v$nodes)
-    n$isLive <- rowSums(n[input$filters]) >= length(input$filters)
-    n$icon <- with(n, ifelse(vsn %in% v$selNodes, "redStar",
+  
+  updateMarkers <- function(f, n, s) {
+    n$isLive <- rowSums(n[f]) >= length(f)
+    n$icon <- with(n, ifelse(vsn %in% s, "redStar",
                              ifelse(isLive, "blueStar", "greyStar")))
-    n$z <- with(n, ifelse(vsn %in% v$selNodes, 1000, 
+    n$z <- with(n, ifelse(vsn %in% s, 1000, 
                           ifelse(isLive, 500, 0))) # Draw selected nodes on top
     mapProxy %>%
       clearMarkers() %>%
       addMarkers(data=n, icon=~mapIcons[icon], layerId=~vsn, lat=~lat, lng=~lng,
                  options=markerOptions(zIndexOffset=~z))
+  }
+
+  # Update map icons on node selection
+  observe({
+    f <- isolate(input$filters)
+    n <- isolate(v$nodes)
+    s <- v$selNodes
+    updateMarkers(f,n,s)
+  })
+  
+  # Update map icons on filter change
+  observeEvent(input$filterBtn, {
+    # f <- isolate(input$filters)
+    # n <- isolate(v$nodes)
+    # s <- isolate(v$selNodes)
+    updateMarkers(input$filters, v$nodes, v$selNodes)
   })
 
   # Update selected nodes on map click
@@ -229,7 +253,7 @@ server <- shinyServer(function(input, output, session) {
 
   # Update table selected rows on node change
   observe({
-    n <- isolate(v$tblNodes)                     # No dependency on nodes
+    n <- v$tblNodes                     # Dependency on tblNodes
     curNode <- v$selNodes[1]                  # Dependency on selNodes
 
     if (is.null(curNode) | curNode == "") {
@@ -273,8 +297,7 @@ server <- shinyServer(function(input, output, session) {
   # On node selection, get data from API
   observe({
     id <- v$selNodes[1]
-    print(id)
-    
+
     if (id != "") {
       pollutantDF <- simpleGetNow(pollutantsensors, id)
       pollutantDF$value <- abs(pollutantDF$value)
@@ -291,7 +314,7 @@ server <- shinyServer(function(input, output, session) {
   output$testarea <- renderPrint({
     #v$selNodes
     #v$curPollutantData
-    
+    v$tblNodes
   })
 })
 
