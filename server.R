@@ -2,7 +2,8 @@ library(AotClient)
 library(DT)
 library(leaflet)
 library(sp)
-
+library(future)
+source("barChart.R")
 source("viewAotData.R")
 
 v <- reactiveValues()
@@ -16,6 +17,20 @@ mapIcons <- iconList(
 )
 
 server <- shinyServer(function(input, output, session) {
+  #comparingNodes
+  
+  output$testBarChart1 <- renderPlot(
+    pollutantsChart("004","m"))
+  output$testBarChart2 <- renderPlot(
+    pollutantsChart("004","m"))
+  pl2 <-
+  output$etcChart1 <- renderPlot(
+    etcChart("004","m")
+    )
+  output$etcChart2 <- renderPlot(
+    etcChart("004","m")
+    )
+  
   # Render table the first time, and if nodes changes
   output$table <- renderDataTable(v$nodes, options = list(pageLength=10))
   tableProxy <- dataTableProxy("table")

@@ -17,7 +17,7 @@ pollutantsChart <- function(nodeID,metric){
     ))
     newRow <- newRow %>%
       dplyr::select(value,sensor_path)
-    if(metric = 's'){
+    if(metric == 's'){
       newRow$value <- 0
     }
     df <- rbind(df,newRow)
@@ -44,7 +44,7 @@ etcChart <- function(nodeID, metric){
         size = 1
       ))
     }
-
+    
     newRow <- newRow %>%
       dplyr::select(value,sensor_path)
     df <- rbind(df,newRow)

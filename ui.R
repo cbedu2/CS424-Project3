@@ -1,6 +1,7 @@
 library(shinydashboard)
 library(leaflet)
 library(DT)
+library(future)
 
 filterList <- c("SO2", "H2S", "O3", "NO2", "CO",
                 "Temp", "Intensity", "Humidity")
@@ -35,7 +36,7 @@ ui <- bootstrapPage(
     css,
     h2("The Air I Breathe"),
     tags$div(id="mainpage", class="col-12",
-             tags$div(class="col-xs-6 col-md-3 col-lg-3", style="height:100%",
+             tags$div(class="col-xs-6 col-md-3 col-lg-3", style="height:100%; padding: 0",
                       h3("Interactive Map"),
                       leafletOutput("map",height=600),
                       radioButtons("mapTiles", "Map Background",
@@ -43,31 +44,83 @@ ui <- bootstrapPage(
                                    choiceNames = c("Road Map", "Satellite", "Terrain"),
                                    inline = TRUE)
              ),
-             tags$div(class="col-xs-6 col-md-3 col-lg-3", style="height:100%",
+             tags$div(class="col-xs-6 col-md-3 col-lg-3", style="height:100%; padding: 0",
                       h3("Data Table"),
                       DT::dataTableOutput("table")
              ),
              tags$div(id="compareNodes",class="col-xs-12 col-md-6 col-lg-6",
-                      tags$div(class="col-xs-6 col-md-3 col-lg-3", style="height:100%; border: 5px solid red;width:50%",
+                      tags$div(class="col-xs-6 col-md-3 col-lg-3", style="height:100%; width:50%; padding: 0",
                                h3("Node1"),
-                               placeholderImg
+                               h4("Now"),
+                               plotOutput("testBarChart1"),
+                               plotOutput("etcChart1"),
+                               h4("last 24 Hours"),
+                               tabsetPanel(type = "tabs",
+                                           tabPanel("SO2", "pending"),
+                                           tabPanel("H2S","pending"),
+                                           tabPanel("O3", "pending"),
+                                           tabPanel("NO2", "pending"),
+                                           tabPanel("CO", "pending"),
+                                           tabPanel("PM2.5", "pending"),
+                                           tabPanel("PM10", "pending"),
+                                           tabPanel("Temp", "pending"),
+                                           tabPanel("Light ", "pending"),
+                                           tabPanel("humidity ","pending")
+                               ),
+                               h4("last 7 Days"),
+                               tabsetPanel(type = "tabs",
+                                           tabPanel("SO2", "pending"),
+                                           tabPanel("H2S", "pending"),
+                                           tabPanel("O3", "pending"),
+                                           tabPanel("NO2", "pending"),
+                                           tabPanel("CO", "pending"),
+                                           tabPanel("PM2.5", "pending"),
+                                           tabPanel("PM10", "pending"),
+                                           tabPanel("Temp", "pending"),
+                                           tabPanel("Light ", "pending"),
+                                           tabPanel("humidity ","pending")
+                               )
                       ),
-                      tags$div(class="col-xs-6 col-md-3 col-lg-3",style="height:100%; border: 5px solid red;width:50%",
+                      tags$div(class="col-xs-6 col-md-3  col-lg-3", style="height:100%; width:50%; padding: 0",
                                h3("Node2"),
-                               placeholderImg
-                      ),
-                      tags$div(
-                        #tags$p("select timeframe to view"),
-                        radioButtons("timeframe", "Timeframe:",
-                                     choiceValues=c("n", "d", "w"),
-                                     choiceNames=c("Now", "Last 24 Hours", "Last 7 Days"))
+                               h4("Now"),
+                               plotOutput("testBarChart2"),
+                               plotOutput("etcChart2"),
+                               h4("last 24 Hours"),
+                               tabsetPanel(type = "tabs",
+                                           tabPanel("SO2", "pending"),
+                                           tabPanel("H2S","pending"),
+                                           tabPanel("O3", "pending"),
+                                           tabPanel("NO2", "pending"),
+                                           tabPanel("CO", "pending"),
+                                           tabPanel("PM2.5", "pending"),
+                                           tabPanel("PM10", "pending"),
+                                           tabPanel("Temp", "pending"),
+                                           tabPanel("Light ", "pending"),
+                                           tabPanel("humidity ","pending")
+                               ),
+                               h4("last 7 Days"),
+                               tabsetPanel(type = "tabs",
+                                           tabPanel("SO2", "pending"),
+                                           tabPanel("H2S", "pending"),
+                                           tabPanel("O3", "pending"),
+                                           tabPanel("NO2", "pending"),
+                                           tabPanel("CO", "pending"),
+                                           tabPanel("PM2.5", "pending"),
+                                           tabPanel("PM10", "pending"),
+                                           tabPanel("Temp", "pending"),
+                                           tabPanel("Light ", "pending"),
+                                           tabPanel("humidity ","pending")
+                               )
                       )
              ),
              tags$div(class="col-md-12 col-lg-12 col-xs-4",
                       tags$div(
-                        checkboxGroupInput("filters", "Filter Options", inline = TRUE,
+                        tags$h3("Filter Options"),
+                        checkboxGroupInput("filters",label="",inline = TRUE,
                                            choices = filterList, selected=filterList),
-                        radioButtons("units", "Units", inline = TRUE,
+                        tags$h3("Units"),
+                        radioButtons("units",label="",inline = TRUE,
                                      choiceValues = c("i", "m"), choiceNames = c("Imperial", "Metric"))
                       ),
                       tags$p(
