@@ -143,8 +143,7 @@ ui <- bootstrapPage(
                       ),
                       actionButton("moreInfoModalButton", "More Info")
              )
-    ),
-    verbatimTextOutput("testarea")
+    )
   )
 )
 ui

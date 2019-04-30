@@ -340,13 +340,6 @@ server <- shinyServer(function(input, output, session) {
       v$curEtcData <- miscDF
     }
   })
-  
-  output$testarea <- renderPrint({
-    #v$selNodes
-    #v$curPollutantData
-    #v$tblNodes
-    v$curEtcData[1,1]
-  })
 })
 
 server
