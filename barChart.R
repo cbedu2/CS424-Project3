@@ -32,8 +32,8 @@ simpleGetNow <- function(sensorTypes, nodeID) {
 }
 
 pollutantsChart <- function(df,metric){
-  ggplot(df,aes(x=sensor_path,y=value)) +
-    geom_bar(stat='identity',width=.5) +
+  ggplot(df,aes(x=sensor_path,y=value, fill=sensor_path)) +
+    geom_bar(stat='identity',width=.5) + scale_fill_manual(values=c("#E69F00","#56B4E9","#F0E442","#0072B2","#D55E00"))+
     theme(axis.text.x=element_text(angle=60,hjust=1,vjust=0.5))
 }
 
@@ -62,7 +62,7 @@ etcChart <- function(df, metric){
   #     dplyr::select(value,sensor_path)
   #   df <- rbind(df,newRow)
   # }
-  return(ggplot(df,aes(x=sensor_path,y=value)) +
-           geom_bar(stat='identity',width=.5) +
+  return(ggplot(df,aes(x=sensor_path,y=value,fill=sensor_path)) +
+           geom_bar(stat='identity',width=.5) + scale_fill_manual(values = c("#FDEB73","#F6C15B","#ED9445"))+
            theme(axis.text.x=element_text(angle=60,hjust=1,vjust=0.5)))
 }
