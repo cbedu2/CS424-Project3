@@ -56,12 +56,29 @@ server <- shinyServer(function(input, output, session) {
     }
   })
   observe({
-    if (nrow(v$curEtcData) < 1 | !("sensor_path" %in% colnames(v$curEtcData))) {
+    # if (nrow(v$curEtcData) < 1 | !("sensor_path" %in% colnames(v$curEtcData))) {
+    #   output$node1Err2 <- renderText("No data for selected node!")
+    #   #output$etcChart1 <- renderPlot()
+    # } else {
+    #   output$node1Err2 <- renderText("")
+    #   output$etcChart1 <- renderPlot(etcChart(v$curEtcData, input$units))
+    # }
+    if (nrow(v$curEtcData) < 1) {
       output$node1Err2 <- renderText("No data for selected node!")
-      #output$etcChart1 <- renderPlot()
     } else {
       output$node1Err2 <- renderText("")
-      output$etcChart1 <- renderPlot(etcChart(v$curEtcData, input$units))
+      t <- v$curEtcData[1,1]
+      h <- v$curEtcData[2,1]
+      i <- v$curEtcData[3,1]
+      if (input$units == "i") {
+        t <- ((t * 9) / 5) + 32
+        tempUnit <- "F"
+      } else {
+        tempUnit <- "C"
+      }
+      output$node1Temp <- renderText(paste(t, "°", tempUnit))
+      output$node1Int <- renderText(paste(v$curEtcData[2,1], v$curEtcData[2,2]))
+      output$node1Hum <- renderText(paste(v$curEtcData[3,1], v$curEtcData[3,2]))
     }
   })
 
@@ -74,11 +91,22 @@ server <- shinyServer(function(input, output, session) {
     }
   })
   observe({
-    if (nrow(v$prevEtcData) < 1 | !("sensor_path" %in% colnames(v$prevEtcData))) {
+    if (nrow(v$prevEtcData) < 1) {
       output$node2Err2 <- renderText("No data for selected node!")
     } else {
       output$node2Err2 <- renderText("")
-      output$etcChart2 <- renderPlot(etcChart(v$prevEtcData, input$units))
+      t <- v$prevEtcData[1,1]
+      i <- v$prevEtcData[2,1]
+      h <- v$prevEtcData[3,1]
+      if (input$units == "i") {
+        t <- ((t * 9) / 5) + 32
+        tempUnit <- "F"
+      } else {
+        tempUnit <- "C"
+      }
+      output$node2Temp <- renderText(paste(t, "°", tempUnit))
+      output$node2Int <- renderText(paste(i, v$prevEtcData[2,2]))
+      output$node2Hum <- renderText(paste(h, v$prevEtcData[3,2]))
     }
   })
   
@@ -316,7 +344,8 @@ server <- shinyServer(function(input, output, session) {
   output$testarea <- renderPrint({
     #v$selNodes
     #v$curPollutantData
-    v$tblNodes
+    #v$tblNodes
+    v$curEtcData[1,1]
   })
 })
 

@@ -28,7 +28,8 @@ filterList <- c("SO2", "H2S", "O3", "NO2", "CO",
 css = tags$style(
   ".body{
   background-color: aliceblue;
-  }"
+  }
+  "
 )
 
 ui <- bootstrapPage(
@@ -56,7 +57,12 @@ ui <- bootstrapPage(
                                h5(textOutput("node1Err1")),
                                plotOutput("testBarChart1"),
                                h5(textOutput("node1Err2")),
-                               plotOutput("etcChart1"),
+                               splitLayout(
+                                 tags$div("Temperature:", textOutput("node1Temp")),
+                                 tags$div("Humidity:", textOutput("node1Hum")),
+                                 tags$div("Light Intensity:", textOutput("node1Int"))
+                               ),
+                               # plotOutput("etcChart1"),
                                h4("last 24 Hours"),
                                tabsetPanel(type = "tabs",
                                            tabPanel("SO2", plotOutput("lineCharta1")),
@@ -66,7 +72,7 @@ ui <- bootstrapPage(
                                            tabPanel("CO", plotOutput("lineCharta5")),
                                            tabPanel("Temp", plotOutput("lineCharta8")),
                                            tabPanel("Light ", plotOutput("lineCharta9")),
-                                           tabPanel("humidity ",plotOutput("lineCharta10"))
+                                           tabPanel("Humidity ",plotOutput("lineCharta10"))
                                ),
                                h4("last 7 Days"),
                                tabsetPanel(type = "tabs",
@@ -86,7 +92,12 @@ ui <- bootstrapPage(
                                h5(textOutput("node2Err1")),
                                plotOutput("testBarChart2"),
                                h5(textOutput("node2Err2")),
-                               plotOutput("etcChart2"),
+                               splitLayout(
+                                 tags$div("Temperature:", textOutput("node2Temp")),
+                                 tags$div("Humidity:", textOutput("node2Hum")),
+                                 tags$div("Light Intensity:", textOutput("node2Int"))
+                               ),
+                               #plotOutput("etcChart2"),
                                h4("Last 24 Hours"),
                                tabsetPanel(type = "tabs",
                                            tabPanel("SO2", plotOutput("lineChartac1")),
