@@ -194,13 +194,18 @@ server <- shinyServer(function(input, output, session) {
            </ul>
            <h3>Libraries used</h3>
            <ul>
-              <li>library(sp)</li>
-              <li>library(leaflet)</li>
-              <li>library(DT)</li>
-              <li>library(AotClient)</li>
-              <li>library(shiny)</li>
               <li>library(shinydashboard)</li>
-              <li>library(future)</li>
+            <li>library(shiny)</li>
+            <li>library(AotClient)</li>
+            <li>library(DT)</li>
+            <li>library(leaflet)</li>
+            <li>library(lubridate)</li>
+            <li>library(sp)</li>
+            <li>library(future
+            <li>library(dplyr)</li>
+            <li>library(stringr)</li>
+            <li>library(ggplot2)</li>
+            <li>library(plotly)</li>
            </ul>
            <p>you can read more about how this project was created using R and Shiny at our <a href=\"https://cbedu2.github.io/CS424/Projects/Project3/index.html\">webpage</a></p>
            "),
