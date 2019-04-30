@@ -18,6 +18,16 @@ getXDaysAgoISO8601 <-function(days=0){
   return(formatDate(daysAgoEpoch))
 }
 
+validateDataFrame <-function(dt){
+  if(is.data.frame(dt)){
+    if(nrow(dt)==0){
+      dt <- data.frame()
+    }
+  }else{
+    dt <- data.frame()
+  }
+  return(dt)
+}
 
 queryBuilder <- function(sensorType="", timestamp="",nodeId=""){
   filters <- list(
@@ -33,8 +43,8 @@ queryBuilder <- function(sensorType="", timestamp="",nodeId=""){
   if( len == 20000){
     filters$page <- 2
     data2 <- query(filters)[,-(5:9),drop=FALSE]
-    return(rbind(data1,data2))
+    return(validateDataFrame(rbind(data1,data2)))
   }else{
-    return(data1)
+    return(validateDataFrame(data1))
   }
 }

@@ -110,56 +110,6 @@ server <- shinyServer(function(input, output, session) {
       dplyr::select(vsn, address, CO, H2S, NO2, O3, SO2, Temp, Humidity, Intensity)
   })
 
-   df1 <- ls.observations(filters = list(
-       node = '004',
-       sensor = 'chemsense.co.concentration',
-       timestamp = 'ge:2019-04-29T00:00:00',
-       size = 2000
-  ))
-  lineChart <- weeklyLineChart(df1,"m")
-  output$lineCharta1 <- renderPlot(lineChart)
-  output$lineCharta2 <- renderPlot(lineChart)
-  output$lineCharta3 <- renderPlot(lineChart)
-  output$lineCharta4 <- renderPlot(lineChart)
-  output$lineCharta5 <- renderPlot(lineChart)
-  output$lineCharta6 <- renderPlot(lineChart)
-  output$lineCharta7 <- renderPlot(lineChart)
-  output$lineCharta8 <- renderPlot(lineChart)
-  output$lineCharta9 <- renderPlot(lineChart)
-  output$lineCharta10 <- renderPlot(lineChart)
-  
-  output$lineChartb1 <- renderPlot(lineChart)
-  output$lineChartb2 <- renderPlot(lineChart)
-  output$lineChartb3 <- renderPlot(lineChart)
-  output$lineChartb4 <- renderPlot(lineChart)
-  output$lineChartb5 <- renderPlot(lineChart)
-  output$lineChartb6 <- renderPlot(lineChart)
-  output$lineChartb7 <- renderPlot(lineChart)
-  output$lineChartb8 <- renderPlot(lineChart)
-  output$lineChartb9 <- renderPlot(lineChart)
-  output$lineCharta10 <- renderPlot(lineChart)
-  
-  output$lineChartac1 <- renderPlot(lineChart)
-  output$lineChartac2 <- renderPlot(lineChart)
-  output$lineChartac3 <- renderPlot(lineChart)
-  output$lineChartac4 <- renderPlot(lineChart)
-  output$lineChartac5 <- renderPlot(lineChart)
-  output$lineChartac6 <- renderPlot(lineChart)
-  output$lineChartac7 <- renderPlot(lineChart)
-  output$lineChartac8 <- renderPlot(lineChart)
-  output$lineChartac9 <- renderPlot(lineChart)
-  output$lineChartac10 <- renderPlot(lineChart)
-  
-  output$lineChartbc1 <- renderPlot(lineChart)
-  output$lineChartbc2 <- renderPlot(lineChart)
-  output$lineChartbc3 <- renderPlot(lineChart)
-  output$lineChartbc4 <- renderPlot(lineChart)
-  output$lineChartbc5 <- renderPlot(lineChart)
-  output$lineChartbc6 <- renderPlot(lineChart)
-  output$lineChartbc7 <- renderPlot(lineChart)
-  output$lineChartbc8 <- renderPlot(lineChart)
-  output$lineChartbc9 <- renderPlot(lineChart)
-  output$lineChartbc10 <- renderPlot(lineChart)
 
   # Render table the first time, and if filters changes
   observe({
@@ -314,6 +264,167 @@ server <- shinyServer(function(input, output, session) {
       v$prevEtcData <- isolate(v$curEtcData)
       v$curPollutantData <- pollutantDF
       v$curEtcData <- miscDF
+      node2DayError <- FALSE
+      node2WeekError <- FALSE
+      node1DayError <- FALSE
+      node1WeekError <- FALSE
+      
+      v$prevDaySO2 <-isolate(v$curDaySO2)
+      if(nrow(v$prevDaySO2)==0){
+        node2DayError <- TRUE
+      }
+      output$node2DaySO2 <-renderPlot(dailyLineChart(v$prevDaySO2,"m"))
+      
+      v$prevDayH2S <-isolate(v$curDayH2S)
+      if(nrow(v$prevDayH2S)==0){
+        node2DayError <- TRUE
+      }
+      output$node2DayH2S <-renderPlot(dailyLineChart(v$prevDayH2S,"m"))
+      
+      v$prevDayO3 <-isolate(v$curDayO3)
+      if(nrow(v$prevDayO3)==0){
+        node2DayError <- TRUE
+      }
+      output$node2DayO3 <-renderPlot(dailyLineChart(v$prevDayO3,"m"))
+      
+      v$prevDayNO2 <-isolate(v$curDayNO2)
+      if(nrow(v$prevDayNO2)==0){
+        node2DayError <- TRUE
+      }
+      output$node2DayNO2 <-renderPlot(dailyLineChart(v$prevDaySO2,"m"))
+      
+      v$prevDayCO <-isolate(v$curDayCO)
+      if(nrow(v$prevDayCO)==0){
+        node2DayError <- TRUE
+      }
+      output$node2DayCO <-renderPlot(dailyLineChart(v$prevDayCO,"m"))
+      
+      
+      v$prevWeekSO2 <-isolate(v$curDaySO2)
+      if(nrow(v$prevWeekSO2)==0){
+        node2WeekError <- TRUE
+      }
+      output$node2WeekSO2 <-renderPlot(dailyLineChart(v$prevWeekSO2,"m"))
+      
+      
+      v$prevWeekH2S <-isolate(v$curDayH2S)
+      if(nrow(v$prevWeekH2S)==0){
+        node2WeekError <- TRUE
+      }
+      output$node2WeekH2S <-renderPlot(dailyLineChart(v$prevWeekH2S,"m"))
+      
+      
+      v$prevWeekO3 <-isolate(v$curDayO3)
+      if(nrow(v$prevWeekO3)==0){
+        node2WeekError <- TRUE
+      }
+      output$node2WeekO3 <-renderPlot(dailyLineChart(v$prevWeekO3,"m"))
+      
+      v$prevWeekNO2 <-isolate(v$curDayNO2)
+      if(nrow(v$prevWeekNO2)==0){
+        node2WeekError <- TRUE
+      }
+      output$node2WeekNO2 <-renderPlot(dailyLineChart(v$prevWeekNO2,"m"))
+      
+      
+      v$prevWeekCO <-isolate(v$curDayCO)
+      if(nrow(v$prevWeekCO)==0){
+        node2WeekError <- TRUE
+      }
+      output$node2WeekCO <-renderPlot(dailyLineChart(v$prevWeekCO,"m"))
+      
+      
+      v$curDaySO2 <-queryBuilder(sensorType = "chemsense.so2.concentration",getXDaysAgoISO8601(1),nodeId = id)
+      if(nrow(v$curDaySO2)==0){
+        node1DayError <- TRUE
+      }
+      output$node1DaySO2 <-renderPlot(dailyLineChart(v$curDaySO2,"m"))
+      
+      
+      v$curDayH2S <-queryBuilder(sensorType = "chemsense.h2s.concentration",getXDaysAgoISO8601(1),nodeId = id)
+      if(nrow(v$curDayH2S)==0){
+        node1DayError <- TRUE
+      }
+      output$node1DayH2S <-renderPlot(dailyLineChart(v$curDayH2S,"m"))
+      
+      
+      v$curDayO3 <-queryBuilder(sensorType = "chemsense.o3.concentration",getXDaysAgoISO8601(1),nodeId = id)
+      if(nrow(v$curDayO3)==0){
+        node1DayError <- TRUE
+      }
+      output$node1DayO3 <-renderPlot(dailyLineChart(v$curDayO3,"m"))
+      
+      v$curDayNO2 <-queryBuilder(sensorType = "chemsense.no2.concentration",getXDaysAgoISO8601(1),nodeId = id)
+      if(nrow(v$curDayNO2)==0){
+        node1DayError <- TRUE
+      }
+      output$node1DayNO2 <-renderPlot(dailyLineChart(v$curDayNO2,"m"))
+      
+      
+      v$curDayCO <-queryBuilder(sensorType = "chemsense.co.concentration",getXDaysAgoISO8601(1),nodeId = id)
+      if(nrow(v$curDayCO)==0){
+        node1DayError <- TRUE
+      }
+      output$node1DayCO <-renderPlot(dailyLineChart(v$curDayCO,"m"))
+      
+      
+      v$curWeekSO2 <-queryBuilder(sensorType = "chemsense.so2.concentration",getXDaysAgoISO8601(7),nodeId = id)
+      if(nrow(v$curWeekSO2)==0){
+        node1WeekError <- TRUE
+      }
+      output$node1WeekSO2 <-renderPlot(dailyLineChart(v$curWeekSO2,"m"))
+      
+      v$curWeekH2S <-queryBuilder(sensorType = "chemsense.h2s.concentration",getXDaysAgoISO8601(7),nodeId = id)
+      if(nrow(v$curWeekH2S)==0){
+        node1WeekError <- TRUE
+      }
+      output$node1WeekH2S <-renderPlot(dailyLineChart(v$curWeekH2S,"m"))
+      
+      
+      v$curWeekO3 <-queryBuilder(sensorType = "chemsense.o3.concentration",getXDaysAgoISO8601(7),nodeId = id)
+      if(nrow(v$curWeekO3)==0){
+        node1WeekError <- TRUE
+      }
+      output$node1WeekO3 <-renderPlot(dailyLineChart(v$curWeekO3,"m"))
+      
+      
+      v$curWeekNO2 <-queryBuilder(sensorType = "chemsense.no2.concentration",getXDaysAgoISO8601(7),nodeId = id)
+      if(nrow(v$curWeekNO2)==0){
+        node1WeekError <- TRUE
+      }
+      output$node1WeekNO2 <-renderPlot(dailyLineChart(v$curWeekNO2,"m"))
+      
+      
+      v$curWeekCO <-queryBuilder(sensorType = "chemsense.co.concentration",getXDaysAgoISO8601(7),nodeId = id)
+      if(nrow(v$curWeekCO)==0){
+        node1WeekError <- TRUE
+      }
+      output$node1WeekCO <-renderPlot(dailyLineChart(v$curWeekCO,"m"))
+      
+      
+      if(node1DayError){
+        output$node1DayError <-textOutput("Some data is missing")
+      }else{
+        output$node1DayError <-textOutput("")
+      }
+      
+      if(node1WeekError){
+        output$node1WeekError <-textOutput("Some data is missing")
+      }else{
+        output$node1WeekError <-textOutput("")
+      }
+      
+      if(node2DayError){
+        output$node2DayError <-textOutput("Some data is missing")
+      }else{
+        output$node2DayError <-textOutput("")
+      }
+      
+      if(node1WeekError){
+        output$node2WeekError <-textOutput("Some data is missing")
+      }else{
+        output$node2WeekError <-textOutput("")
+      }
     }
   })
   
